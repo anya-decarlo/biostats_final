@@ -80,50 +80,33 @@ ggplot(birth_control_data, aes(x = children_category)) +
 
 # Create the demographic table
 demographic_table <- birth_control_data %>%
-  select(age, everschool, place, totalchildren, children_category, birthc) %>%
+  select(age, everschool, place, children_category, birthc) %>%
   tbl_summary(
     by = NULL,
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      all_categorical() ~ "{n} ({p}%)"
-    ),
-    digits = all_continuous() ~ 1,
     label = list(
       age ~ "Age, years",
       everschool ~ "Educational Status",
       place ~ "Place of Residence",
-      totalchildren ~ "Total Number of Children",
-      children_category ~ "Children Category",
+      children_category ~ "Number of Children",
       birthc ~ "Current Use of Modern Birth Control Methods"
     ),
-    missing = "no"
+    type = list(where(is.factor) ~ "categorical"),
+    digits = list(all_categorical() ~ c(0, 1))
   ) %>%
-  modify_header(label = "**Characteristic**") %>%
-  modify_caption("Table 1: Demographic Characteristics of Women (N=15,198) Who Participated in the Study, Papua New Guinea, 2018") %>%
   bold_labels() %>%
-  add_stat_label(label = list(
-    all_continuous() ~ "Mean (SD)",
-    all_categorical() ~ "n (%)"
-  )) %>%
-  modify_footnote(
-    all_stat_cols() ~ paste(
-      "SD = Standard Deviation.",
-      "Modern birth control methods include hormonal contraceptives, IUDs, and barrier methods.",
-      "Educational status refers to any formal schooling attendance.",
-      sep = " "
-    )
-  ) %>%
+  modify_header(label = "**Characteristic**") %>%
+  modify_header(stat_0 = "**No. (%)**\nN = 15,198") %>%
   as_gt() %>%
-  gt::tab_options(
-    table.border.top.style = "hidden",
-    heading.title.font.size = 16,
-    column_labels.font.weight = "bold",
-    table.font.size = 12,
-    footnotes.font.size = 10
+  tab_header(
+    title = md("**Table 1.** Demographic Characteristics of Women (N=15,198) Who Participated in the Study, Papua New Guinea, 2018")
   ) %>%
-  tab_style(
-    style = cell_text(weight = "bold"),
-    locations = cells_column_labels()
+  tab_options(
+    table.border.top.style = "hidden",
+    column_labels.font.weight = "bold",
+    table.font.size = 11,
+    heading.title.font.size = 11,
+    data_row.padding = px(5),
+    table.width = pct(100)
   )
 
 # First save as HTML
